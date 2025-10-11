@@ -15,6 +15,6 @@ Database : SQLite
 # Features
 
 - Add, edit, and delete tasks  
-- Filter tasks by (All / Completed / Pending) 
+- Filter tasks by (To do / Done / In progress) 
 - Persistent storage with SQLite 
 - Simple and responsive design   
