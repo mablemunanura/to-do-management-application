@@ -1,0 +1,92 @@
+import { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+type AddTaskFormProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onAddTask: (task: { title: string; dueDate: string; tag: string; priority: "High" | "Mid" | "Low"; progress: number }) => void;
+};
+
+export default function AddTaskForm({ isOpen, onClose, onAddTask }: AddTaskFormProps) {
+  const [title, setTitle] = useState("");
+  const [dueDate, setDueDate] = useState<Date | null>(null);
+  const [tag, setTag] = useState("");
+  const [priority, setPriority] = useState<"High" | "Mid" | "Low">("Mid");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (title && dueDate && tag) {
+      const formattedDate = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      onAddTask({ title, dueDate: formattedDate, tag, priority, progress: 0 });
+      setTitle("");
+      setDueDate(null);
+      setTag("");
+      setPriority("Mid");
+      onClose();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-2xl shadow-lg w-96">
+        <h2 className="text-xl font-bold mb-4">Add New Task</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full p-2 border rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Due Date</label>
+            <DatePicker
+              selected={dueDate}
+              onChange={(date) => setDueDate(date)}
+              className="w-full p-2 border rounded"
+              placeholderText="Select a date"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Tag</label>
+            <input
+              type="text"
+              value={tag}
+              onChange={(e) => setTag(e.target.value)}
+              className="w-full p-2 border rounded"
+              placeholder="e.g., Work"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Priority</label>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as "High" | "Mid" | "Low")}
+              className="w-full p-2 border rounded"
+            >
+              <option value="High">High</option>
+              <option value="Mid">Mid</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
+              Cancel
+            </button>
+            <button type="submit" className="px-4 py-2 bg-[#3c41d1] text-white rounded">
+              Add Task
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

@@ -1,4 +1,4 @@
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, SquareCheck } from "lucide-react";
 
 type TaskItemProps = {
   title: string;
@@ -16,6 +16,9 @@ export default function TaskItem({ title, dueDate, tag, priority }: TaskItemProp
 
   return (
     <tr className="border-t">
+      <td>
+        <SquareCheck size = {16}/>
+      </td>
       <td className="py-2">
         <input type="checkbox" className="mr-2" /> {title}
       </td>

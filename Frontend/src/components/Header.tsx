@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 
 export default function Header() {
   return (
-    <div className="flex justify-between items-center bg-white shadow-sm rounded-xl px-6 py-3 mb-6">
+    <div className="flex justify-between w-max-screen items-center bg-white shadow-sm rounded-xl px-6 py-3 mb-6">
       <div className="relative w-1/2">
         <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
         <input
