@@ -179,6 +179,7 @@ export default function ToDo() {
           filters={filters}
           onFilterChange={setFilters}
           availableTags={availableTags}
+          onClearFilters={() => setFilters({ priorities: [], tags: [] })}
         />
         <div className="space-y-6 max-w-screen">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

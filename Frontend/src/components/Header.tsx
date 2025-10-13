@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, ChevronDown, X } from "lucide-react";
+import { Search, Filter, ChevronDown, X, RotateCcw } from "lucide-react";
 
 type HeaderProps = {
   searchQuery: string;
@@ -7,9 +7,10 @@ type HeaderProps = {
   filters: { priorities: string[]; tags: string[] };
   onFilterChange: (filters: { priorities: string[]; tags: string[] }) => void;
   availableTags: string[];
+  onClearFilters: () => void;
 };
 
-export default function Header({ searchQuery, onSearchChange, filters, onFilterChange, availableTags }: HeaderProps) {
+export default function Header({ searchQuery, onSearchChange, filters, onFilterChange, availableTags, onClearFilters }: HeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handlePriorityChange = (priority: string) => {
@@ -39,7 +40,7 @@ export default function Header({ searchQuery, onSearchChange, filters, onFilterC
             className="pl-9 pr-3 py-2 w-full md:w-80 border rounded-xl text-sm focus:outline-none focus:ring focus:ring-indigo-200"
           />
         </div>
-        <div className="relative">
+        <div className="relative flex items-center gap-2">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-2 p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
@@ -47,6 +48,13 @@ export default function Header({ searchQuery, onSearchChange, filters, onFilterC
           >
             <Filter size={18} />
             <ChevronDown size={16} />
+          </button>
+          <button
+            onClick={onClearFilters}
+            className="flex items-center gap-2 p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
+            title="Clear filters"
+          >
+            <RotateCcw size={18} />
           </button>
           {isDropdownOpen && (
             <div className="absolute top-full left-0 mt-1 bg-white border rounded-lg shadow-lg p-4 z-10 min-w-64">
@@ -75,7 +83,7 @@ export default function Header({ searchQuery, onSearchChange, filters, onFilterC
                   ))}
                 </div>
               </div>
-              <div>
+              <div className="mb-4">
                 <h4 className="text-blue-600 font-semibold mb-2">Tags</h4>
                 <div className="space-y-1 max-h-32 overflow-y-auto">
                   {availableTags.map(tag => (
@@ -91,6 +99,15 @@ export default function Header({ searchQuery, onSearchChange, filters, onFilterC
                   ))}
                 </div>
               </div>
+              <button
+                onClick={() => {
+                  onClearFilters();
+                  setIsDropdownOpen(false);
+                }}
+                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+              >
+                Clear Filters
+              </button>
             </div>
           )}
         </div>
