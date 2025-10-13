@@ -50,7 +50,7 @@ export default function ToDo() {
     }
   };
 
-  const handleAddTask = async (newTask: Omit<Task, 'progress' | 'id' | 'status'>) => {
+  const handleAddTask = async (newTask: Omit<Task, 'id' | 'status'>) => {
     try {
       const response = await fetch('http://localhost:8000/tasks', {
         method: 'POST',
@@ -68,6 +68,7 @@ export default function ToDo() {
       });
       if (response.ok) {
         fetchTasks();
+        setIsFormOpen(false);
       }
     } catch (error) {
       console.error('Error adding task:', error);

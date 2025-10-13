@@ -10,7 +10,7 @@ type AddTaskFormProps = {
 
 export default function AddTaskForm({ isOpen, onClose, onAddTask }: AddTaskFormProps) {
   const [title, setTitle] = useState("");
-  const [dueDate, setDueDate] = useState<Date | null>(null);
+  const [dueDate, setDueDate] = useState<Date | null>(new Date());
   const [tag, setTag] = useState("");
   const [priority, setPriority] = useState<"High" | "Mid" | "Low">("Mid");
 
@@ -20,7 +20,7 @@ export default function AddTaskForm({ isOpen, onClose, onAddTask }: AddTaskFormP
       const isoDate = dueDate.toISOString().split('T')[0];
       onAddTask({ title, dueDate: isoDate, tag, priority, progress: 0 });
       setTitle("");
-      setDueDate(null);
+      setDueDate(new Date());
       setTag("");
       setPriority("Mid");
       onClose();

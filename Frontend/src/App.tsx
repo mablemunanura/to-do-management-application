@@ -1,7 +1,16 @@
-import ToDo from "./pages/TodoPage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ToDoPage from "./pages/TodoPage";
+import CalendarPage from "./pages/CalendarPage";
 
 function App() {
-  return <ToDo />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<ToDoPage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
