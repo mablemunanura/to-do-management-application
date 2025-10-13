@@ -27,16 +27,16 @@ export default function Header({ searchQuery, onSearchChange, filters, onFilterC
   };
 
   return (
-    <div className="flex justify-between w-max-screen items-center bg-white shadow-sm rounded-xl px-6 py-3 mb-6">
-      <div className="flex items-center gap-4">
-        <div className="relative">
+    <div className="flex flex-col md:flex-row justify-between w-full items-center bg-white shadow-sm rounded-xl px-4 md:px-6 py-3 mb-6 gap-4">
+      <div className="flex items-center gap-4 w-full md:w-auto">
+        <div className="relative flex-1 md:flex-none">
           <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
           <input
             type="text"
             placeholder="Search for tasks ..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9 pr-3 py-2 w-80 border rounded-xl text-sm focus:outline-none focus:ring focus:ring-indigo-200"
+            className="pl-9 pr-3 py-2 w-full md:w-80 border rounded-xl text-sm focus:outline-none focus:ring focus:ring-indigo-200"
           />
         </div>
         <div className="relative">

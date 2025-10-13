@@ -137,10 +137,10 @@ export default function ToDo() {
 
   return (
     <div className="flex bg-gray-100 min-h-screen min-w-screen">
-      <div className="fixed left-0 top-0 h-full">
+      <div className="fixed left-0 top-0 h-full md:block hidden">
         <Sidebar />
       </div>
-      <div className="flex-1 ml-60 p-8 max-w-screen overflow-y-auto">
+      <div className="flex-1 md:ml-60 p-4 md:p-8 max-w-screen overflow-y-auto">
         <Header
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -149,11 +149,11 @@ export default function ToDo() {
           availableTags={availableTags}
         />
         <div className="space-y-6 max-w-screen">
-          <div className="flex justify-between">
-            <h1 className="text-lg font-bold mb-3">My Tasks</h1>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <h1 className="text-lg font-bold">My Tasks</h1>
             <button
               onClick={() => setIsFormOpen(true)}
-              className="bg-white hover:bg-gray-50 text-blue-600 text-xl font-bold rounded-full px-6 py-1 flex items-center justify-center shadow-lg border-2 border-blue-600"
+              className="bg-white hover:bg-gray-50 text-blue-600 text-xl font-bold rounded-full px-6 py-1 flex items-center justify-center shadow-lg border-2 border-blue-600 w-full md:w-auto"
             >
               <Plus size={20} className="mr-2" />
               Add
