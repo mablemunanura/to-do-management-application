@@ -2,14 +2,16 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ProgressPie from "./ProgressPie";
-import { Pen, Check } from "lucide-react";
+import { Pen, Check, Trash2 } from "lucide-react";
 
 type Task = {
+  id: number;
   title: string;
   dueDate: string;
   tag: string;
   priority: "High" | "Mid" | "Low";
   progress: number;
+  status: string;
 };
 
 type SectionProps = {
@@ -17,16 +19,18 @@ type SectionProps = {
   tasks: Task[];
   onUpdateTask: (index: number, updatedTask: Task) => void;
   onCheckboxChange?: (index: number) => void;
+  onDelete: (index: number) => void;
 };
 
-export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChange }: SectionProps) {
+export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChange, onDelete }: SectionProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingDate, setEditingDate] = useState<Date | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const handleDateClick = (index: number, currentDate: string) => {
     setEditingIndex(index);
-    const parsedDate = new Date(currentDate);
+    const currentYear = new Date().getFullYear();
+    const parsedDate = new Date(`${currentDate} ${currentYear}`);
     setEditingDate(isNaN(parsedDate.getTime()) ? null : parsedDate);
   };
 
@@ -117,28 +121,40 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                   <option value={100}>100%</option>
                 </select>
               </div>
-              {editingTask && editingIndex === i ? (
+              <div className="flex items-center gap-2">
+                {editingTask && editingIndex === i ? (
+                  <button
+                    onClick={() => {
+                      onUpdateTask(i, editingTask);
+                      setEditingTask(null);
+                      setEditingIndex(null);
+                    }}
+                    className="text-green-500 hover:text-green-700 p-1"
+                  >
+                    <Check size={18} />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setEditingTask({ ...task });
+                      setEditingIndex(i);
+                    }}
+                    className="text-gray-500 hover:text-gray-700 p-1"
+                  >
+                    <Pen size={18} />
+                  </button>
+                )}
                 <button
                   onClick={() => {
-                    onUpdateTask(i, editingTask);
-                    setEditingTask(null);
-                    setEditingIndex(null);
+                    if (window.confirm("Are you sure you want to delete this task?")) {
+                      onDelete(i);
+                    }
                   }}
-                  className="text-green-500 hover:text-green-700 p-1"
+                  className="text-red-500 hover:text-red-700 p-1"
                 >
-                  <Check size={18} />
+                  <Trash2 size={18} />
                 </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setEditingTask({ ...task });
-                    setEditingIndex(i);
-                  }}
-                  className="text-gray-500 hover:text-gray-700 p-1"
-                >
-                  <Pen size={18} />
-                </button>
-              )}
+              </div>
             </div>
             <div className="absolute bottom-2 right-2">
               <span className="flex items-center gap-1 text-sm text-gray-600">
@@ -178,6 +194,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
               <th>Priority</th>
               <th>Progress</th>
               <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -305,6 +322,18 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                       <Pen size={16} />
                     </button>
                   )}
+                </td>
+                <td className="py-2 px-2">
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to delete this task?")) {
+                        onDelete(i);
+                      }
+                    }}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </td>
               </tr>
             ))}

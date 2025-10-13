@@ -1,43 +1,77 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import TaskSection from "../components/TaskSection";
 import AddTaskForm from "../components/AddTaskForm";
 import { Plus } from "lucide-react";
 
-
-
 type Task = {
+  id: number;
   title: string;
   dueDate: string;
   tag: string;
   priority: "High" | "Mid" | "Low";
   progress: number; // 0-100
+  status: string;
 };
 
 export default function ToDo() {
-  const [todoTasks, setTodoTasks] = useState<Task[]>([
-    { title: "Website Development", dueDate: "16 Oct", tag: "Work", priority: "High", progress: 0 },
-    { title: "UI/UX refinement", dueDate: "18 Oct", tag: "Work", priority: "Mid", progress: 0 },
-  ]);
-
-  const [inProgress, setInProgress] = useState<Task[]>([
-    { title: "Respond to work emails", dueDate: "16 Oct", tag: "Work", priority: "High", progress: 50 },
-    { title: "Apply for leave", dueDate: "18 Oct", tag: "Work", priority: "Mid", progress: 75 },
-  ]);
-
-  const [done, setDone] = useState<Task[]>([
-    { title: "Book medical appointment", dueDate: "16 Oct", tag: "Health", priority: "High", progress: 100 },
-    { title: "Update LinkedIn profile", dueDate: "18 Oct", tag: "Work", priority: "Low", progress: 100 },
-  ]);
+  const [todoTasks, setTodoTasks] = useState<Task[]>([]);
+  const [inProgress, setInProgress] = useState<Task[]>([]);
+  const [done, setDone] = useState<Task[]>([]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({ priorities: [] as string[], tags: [] as string[] });
 
-  const handleAddTask = (newTask: Omit<Task, 'progress'>) => {
-    setTodoTasks([...todoTasks, { ...newTask, progress: 0 }]);
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/tasks');
+      const tasks = await response.json();
+      const formattedTasks = tasks.map((task: { id: number; title: string; due_date: string; tag: string; priority: string; progress: number; status: string }) => ({
+        id: task.id,
+        title: task.title,
+        dueDate: task.due_date,
+        tag: task.tag,
+        priority: task.priority as "High" | "Mid" | "Low",
+        progress: task.progress,
+        status: task.status,
+      }));
+      setTodoTasks(formattedTasks.filter((task: Task) => task.status === 'To Do'));
+      setInProgress(formattedTasks.filter((task: Task) => task.status === 'In Progress'));
+      setDone(formattedTasks.filter((task: Task) => task.status === 'Done'));
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  };
+
+  const handleAddTask = async (newTask: Omit<Task, 'progress' | 'id' | 'status'>) => {
+    try {
+      const response = await fetch('http://localhost:8000/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: newTask.title,
+          due_date: newTask.dueDate,
+          tag: newTask.tag,
+          priority: newTask.priority,
+          status: 'To Do',
+          progress: 0,
+        }),
+      });
+      if (response.ok) {
+        fetchTasks();
+      }
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
   };
 
   const allTasks = [...todoTasks, ...inProgress, ...done];
@@ -70,68 +104,66 @@ export default function ToDo() {
 
 
 
-  const handleCheckboxChange = (section: string, index: number) => {
-    let taskToMove: Task;
+  const handleCheckboxChange = async (section: string, index: number) => {
+    let task: Task;
     if (section === "To Do") {
-      taskToMove = { ...todoTasks[index], progress: 100 };
-      setTodoTasks(todoTasks.filter((_, i) => i !== index));
-      setDone([...done, taskToMove]);
+      task = { ...todoTasks[index], progress: 100, status: 'Done' };
+      await updateTask(task);
     } else if (section === "In Progress") {
-      taskToMove = { ...inProgress[index], progress: 100 };
-      setInProgress(inProgress.filter((_, i) => i !== index));
-      setDone([...done, taskToMove]);
+      task = { ...inProgress[index], progress: 100, status: 'Done' };
+      await updateTask(task);
     }
   };
 
-  const handleUpdateTask = (section: string, index: number, updatedTask: Task) => {
-    let taskToMove: Task | undefined;
-    let targetSection: string;
+  const updateTask = async (task: Task) => {
+    try {
+      const response = await fetch(`http://localhost:8000/tasks/${task.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: task.title,
+          due_date: task.dueDate,
+          tag: task.tag,
+          priority: task.priority,
+          status: task.status,
+          progress: task.progress,
+        }),
+      });
+      if (response.ok) {
+        fetchTasks();
+      }
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
+
+  const handleUpdateTask = async (section: string, index: number, updatedTask: Task) => {
+    let targetStatus: string;
 
     if (updatedTask.progress === 0) {
-      targetSection = "To Do";
+      targetStatus = "To Do";
     } else if (updatedTask.progress === 100) {
-      targetSection = "Done";
+      targetStatus = "Done";
     } else {
-      targetSection = "In Progress";
+      targetStatus = "In Progress";
     }
 
-    if (targetSection !== section) {
-      // Move task to new section
-      if (section === "To Do") {
-        taskToMove = updatedTask;
-        setTodoTasks(todoTasks.filter((_, i) => i !== index));
-      } else if (section === "In Progress") {
-        taskToMove = updatedTask;
-        setInProgress(inProgress.filter((_, i) => i !== index));
-      } else if (section === "Done") {
-        taskToMove = updatedTask;
-        setDone(done.filter((_, i) => i !== index));
-      }
+    const taskToUpdate = { ...updatedTask, status: targetStatus };
+    await updateTask(taskToUpdate);
+  };
 
-      if (taskToMove) {
-        if (targetSection === "To Do") {
-          setTodoTasks([...todoTasks, taskToMove]);
-        } else if (targetSection === "In Progress") {
-          setInProgress([...inProgress, taskToMove]);
-        } else if (targetSection === "Done") {
-          setDone([...done, taskToMove]);
-        }
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      const response = await fetch(`http://localhost:8000/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        fetchTasks();
       }
-    } else {
-      // Update in place
-      if (section === "To Do") {
-        const newTasks = [...todoTasks];
-        newTasks[index] = updatedTask;
-        setTodoTasks(newTasks);
-      } else if (section === "In Progress") {
-        const newTasks = [...inProgress];
-        newTasks[index] = updatedTask;
-        setInProgress(newTasks);
-      } else if (section === "Done") {
-        const newTasks = [...done];
-        newTasks[index] = updatedTask;
-        setDone(newTasks);
-      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
     }
   };
 
@@ -160,9 +192,9 @@ export default function ToDo() {
             </button>
           </div>
 
-          <TaskSection title="To Do" tasks={filteredTasks(todoTasks)} onUpdateTask={(index, task) => handleUpdateTask("To Do", index, task)} onCheckboxChange={(index) => handleCheckboxChange("To Do", index)} />
-          <TaskSection title="In Progress" tasks={filteredTasks(inProgress)} onUpdateTask={(index, task) => handleUpdateTask("In Progress", index, task)} onCheckboxChange={(index) => handleCheckboxChange("In Progress", index)} />
-          <TaskSection title="Done" tasks={filteredTasks(done)} onUpdateTask={(index, task) => handleUpdateTask("Done", index, task)} />
+          <TaskSection title="To Do" tasks={filteredTasks(todoTasks)} onUpdateTask={(index, task) => handleUpdateTask("To Do", index, task)} onCheckboxChange={(index) => handleCheckboxChange("To Do", index)} onDelete={(index) => handleDeleteTask(todoTasks[index].id)} />
+          <TaskSection title="In Progress" tasks={filteredTasks(inProgress)} onUpdateTask={(index, task) => handleUpdateTask("In Progress", index, task)} onCheckboxChange={(index) => handleCheckboxChange("In Progress", index)} onDelete={(index) => handleDeleteTask(inProgress[index].id)} />
+          <TaskSection title="Done" tasks={filteredTasks(done)} onUpdateTask={(index, task) => handleUpdateTask("Done", index, task)} onDelete={(index) => handleDeleteTask(done[index].id)} />
         </div>
       </div>
       <AddTaskForm

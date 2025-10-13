@@ -33,6 +33,7 @@ class Task(Base):
     tag = Column(String)
     priority = Column(String)  # "High", "Mid", "Low"
     status = Column(String, default="To Do")  # "To Do", "In Progress", "Done"
+    progress = Column(Integer, default=0)
 
 Base.metadata.create_all(bind=engine)
 
@@ -43,6 +44,7 @@ class TaskCreate(BaseModel):
     tag: str
     priority: str
     status: Optional[str] = "To Do"
+    progress: Optional[int] = 0
 
 class TaskResponse(BaseModel):
     id: int
@@ -51,6 +53,7 @@ class TaskResponse(BaseModel):
     tag: str
     priority: str
     status: str
+    progress: int
 
 # Dependency to get DB session
 def get_db():

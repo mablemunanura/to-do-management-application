@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 type AddTaskFormProps = {
   isOpen: boolean;
   onClose: () => void;
-  onAddTask: (task: { title: string; dueDate: string; tag: string; priority: "High" | "Mid" | "Low"; progress: number }) => void;
+  onAddTask: (task: { title: string; dueDate: string; tag: string; priority: "High" | "Mid" | "Low"; progress: number; id?: number; status?: string }) => void;
 };
 
 export default function AddTaskForm({ isOpen, onClose, onAddTask }: AddTaskFormProps) {
@@ -17,8 +17,8 @@ export default function AddTaskForm({ isOpen, onClose, onAddTask }: AddTaskFormP
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title && dueDate && tag) {
-      const formattedDate = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      onAddTask({ title, dueDate: formattedDate, tag, priority, progress: 0 });
+      const isoDate = dueDate.toISOString().split('T')[0];
+      onAddTask({ title, dueDate: isoDate, tag, priority, progress: 0 });
       setTitle("");
       setDueDate(null);
       setTag("");
