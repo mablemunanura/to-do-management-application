@@ -1,6 +1,7 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ProgressPie from "./ProgressPie";
 
 type Task = {
   title: string;
@@ -14,9 +15,10 @@ type SectionProps = {
   title: string;
   tasks: Task[];
   onUpdateTask: (index: number, updatedTask: Task) => void;
+  onCheckboxChange?: (index: number) => void;
 };
 
-export default function TaskSection({ title, tasks, onUpdateTask }: SectionProps) {
+export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChange }: SectionProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingDate, setEditingDate] = useState<Date | null>(null);
 
@@ -54,7 +56,12 @@ export default function TaskSection({ title, tasks, onUpdateTask }: SectionProps
           {tasks.map((task, i) => (
             <tr key={i} className="bg-gray-50 hover:bg-gray-100 transition">
               <td className="py-2 px-2">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={title === "Done"}
+                  disabled={title === "Done"}
+                  onChange={() => onCheckboxChange && onCheckboxChange(i)}
+                />
               </td>
               <td className="py-2 px-2">{task.title}</td>
               <td className="py-2 px-2 flex items-center gap-2">
@@ -93,6 +100,23 @@ export default function TaskSection({ title, tasks, onUpdateTask }: SectionProps
                 >
                   {task.priority}
                 </span>
+              </td>
+              <td className="py-2 px-2 flex items-center gap-2">
+                <ProgressPie progress={task.progress} />
+                <select
+                  value={task.progress}
+                  onChange={(e) => {
+                    const updatedTask = { ...task, progress: parseInt(e.target.value) };
+                    onUpdateTask(i, updatedTask);
+                  }}
+                  className="text-xs border rounded-lg px-1 py-0.5"
+                >
+                  <option value={0}>0%</option>
+                  <option value={25}>25%</option>
+                  <option value={50}>50%</option>
+                  <option value={75}>75%</option>
+                  <option value={100}>100%</option>
+                </select>
               </td>
             </tr>
           ))}

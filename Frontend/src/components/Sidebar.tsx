@@ -1,8 +1,8 @@
-import { Calendar, CheckSquare, LogOut } from "lucide-react";
+import { Calendar, CheckSquare } from "lucide-react";
 
 export default function Sidebar() {
   return (
-    <div className="bg-indigo-700 text-white w-60 max-h-screen flex flex-col justify-between p-6 rounded-r-2xl">
+    <div className="bg-indigo-700 text-white w-60 h-screen flex flex-col p-6 rounded-r-2xl">
       <div>
         <h1 className="text-3xl font-bold mb-8 text-center">TMA</h1>
         <nav className="space-y-4">
@@ -16,11 +16,6 @@ export default function Sidebar() {
           </div>
         </nav>
       </div>
-
-      <button className="flex items-center gap-3 p-3 hover:bg-indigo-600 rounded-xl cursor-pointer">
-        <LogOut size={20} />
-        <span className="font-medium">Log out</span>
-      </button>
     </div>
   );
 }

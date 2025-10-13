@@ -15,9 +15,9 @@ export default function TaskItem({ title, dueDate, tag, priority }: TaskItemProp
   };
 
   return (
-    <tr className="border-t">
+    <tr className="border-t bg-gray-50">
       <td>
-        <SquareCheck size = {16}/>
+        <SquareCheck size={16} />
       </td>
       <td className="py-2">
         <input type="checkbox" className="mr-2" /> {title}

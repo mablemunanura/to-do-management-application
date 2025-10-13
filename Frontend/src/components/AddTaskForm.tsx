@@ -32,7 +32,7 @@ export default function AddTaskForm({ isOpen, onClose, onAddTask }: AddTaskFormP
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-2xl shadow-lg w-96">
-        <h2 className="text-xl font-bold mb-4">Add New Task</h2>
+        <h2 className="text-xl font-bold mb-4 text-blue-600">Add New Task</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Title</label>
@@ -81,7 +81,7 @@ export default function AddTaskForm({ isOpen, onClose, onAddTask }: AddTaskFormP
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-[#3c41d1] text-white rounded">
+            <button type="submit" className="px-4 py-2 bg-white text-blue-600 border-2 border-blue-600 rounded">
               Add Task
             </button>
           </div>
