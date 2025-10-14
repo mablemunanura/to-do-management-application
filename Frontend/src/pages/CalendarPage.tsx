@@ -107,9 +107,18 @@ export default function CalendarPage() {
         <Sidebar />
       </div>
       <div className="flex-1 md:ml-60 p-4 md:p-8 max-w-screen overflow-y-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <CalendarIcon className="text-indigo-600" size={32} />
-          <h1 className="text-3xl font-bold text-gray-800">Calendar View</h1>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div className="flex items-center gap-3">
+            <CalendarIcon className="text-indigo-600" size={32} />
+            <h1 className="text-3xl font-bold text-gray-800">Calendar View</h1>
+          </div>
+          <button
+            onClick={() => setIsFormOpen(true)}
+            className="bg-white hover:bg-gray-50 text-blue-600 text-xl font-bold rounded-full px-6 py-1 flex items-center justify-center shadow-lg border-2 border-blue-600 w-full md:w-auto"
+          >
+            <Plus size={20} className="mr-2" />
+            Add
+          </button>
         </div>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1">

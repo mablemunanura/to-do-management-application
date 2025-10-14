@@ -37,8 +37,17 @@ export default function Header({ searchQuery, onSearchChange, filters, onFilterC
             placeholder="Search for tasks ..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9 pr-3 py-2 w-full md:w-80 border rounded-xl text-sm focus:outline-none focus:ring focus:ring-indigo-200"
+            className="pl-9 pr-9 py-2 w-full md:w-80 border rounded-xl text-sm focus:outline-none focus:ring focus:ring-indigo-200"
           />
+          {searchQuery && (
+            <span title="Clear search">
+              <X
+                size={16}
+                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 cursor-pointer"
+                onClick={() => onSearchChange("")}
+              />
+            </span>
+          )}
         </div>
         <div className="relative flex items-center gap-2">
           <button

@@ -169,7 +169,7 @@ export default function ToDo() {
   };
 
   return (
-    <div className="flex bg-gray-100 min-h-screen min-w-screen">
+    <div className="flex bg-gradient-to-br from-indigo-50 to-blue-50 min-h-screen min-w-screen">
       <div className="fixed left-0 top-0 h-full md:block hidden">
         <Sidebar />
       </div>
@@ -180,7 +180,10 @@ export default function ToDo() {
           filters={filters}
           onFilterChange={setFilters}
           availableTags={availableTags}
-          onClearFilters={() => setFilters({ priorities: [], tags: [] })}
+          onClearFilters={() => {
+            setFilters({ priorities: [], tags: [] });
+            setSearchQuery("");
+          }}
         />
         <div className="space-y-6 max-w-screen">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
