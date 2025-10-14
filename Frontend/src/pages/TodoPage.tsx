@@ -100,6 +100,9 @@ export default function ToDo() {
       filtered = filtered.filter(task => filters.tags.includes(task.tag));
     }
 
+    // Sort by due date in ascending order
+    filtered = filtered.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+
     return filtered;
   };
 
