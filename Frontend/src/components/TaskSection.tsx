@@ -17,9 +17,9 @@ type Task = {
 type SectionProps = {
   title: string;
   tasks: Task[];
-  onUpdateTask: (index: number, updatedTask: Task) => void;
-  onCheckboxChange?: (index: number) => void;
-  onDelete: (index: number) => void;
+  onUpdateTask: (updatedTask: Task) => void;
+  onCheckboxChange?: (task: Task) => void;
+  onDelete: (taskId: number) => void;
 };
 
 export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChange, onDelete }: SectionProps) {
@@ -29,9 +29,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
 
   const handleDateClick = (index: number, currentDate: string) => {
     setEditingIndex(index);
-    const currentYear = new Date().getFullYear();
-    const parsedDate = new Date(`${currentDate} ${currentYear}`);
-    setEditingDate(isNaN(parsedDate.getTime()) ? null : parsedDate);
+    setEditingDate(new Date(currentDate));
   };
 
   return (
@@ -85,7 +83,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                 type="checkbox"
                 checked={title === "Done"}
                 disabled={title === "Done"}
-                onChange={() => onCheckboxChange && onCheckboxChange(i)}
+                onChange={() => onCheckboxChange && onCheckboxChange(task)}
                 className="w-4 h-4"
               />
               <span>
@@ -110,7 +108,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                   value={task.progress}
                   onChange={(e) => {
                     const updatedTask = { ...task, progress: parseInt(e.target.value) };
-                    onUpdateTask(i, updatedTask);
+                    onUpdateTask(updatedTask);
                   }}
                   className="text-xs border rounded-lg px-2 py-1"
                 >
@@ -125,7 +123,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                 {editingTask && editingIndex === i ? (
                   <button
                     onClick={() => {
-                      onUpdateTask(i, editingTask);
+                      onUpdateTask(editingTask);
                       setEditingTask(null);
                       setEditingIndex(null);
                     }}
@@ -147,7 +145,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                 <button
                   onClick={() => {
                     if (window.confirm("Are you sure you want to delete this task?")) {
-                      onDelete(i);
+                      onDelete(task.id);
                     }
                   }}
                   className="text-red-500 hover:text-red-700 p-1"
@@ -163,7 +161,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                     selected={editingDate}
                     onChange={(date) => {
                       if (date) {
-                        const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        const formattedDate = date.toISOString().split('T')[0];
                         setEditingTask({ ...editingTask, dueDate: formattedDate });
                       }
                     }}
@@ -205,7 +203,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                     type="checkbox"
                     checked={title === "Done"}
                     disabled={title === "Done"}
-                    onChange={() => onCheckboxChange && onCheckboxChange(i)}
+                    onChange={() => onCheckboxChange && onCheckboxChange(task)}
                   />
                 </td>
                 <td className="py-2 px-2">
@@ -222,26 +220,26 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                   )}
                 </td>
                 <td className="py-2 px-2 flex items-center gap-2">
-                  {editingTask && editingIndex === i ? (
-                    <DatePicker
-                      selected={editingDate}
-                      onChange={(date) => {
-                        if (date) {
-                          const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                          setEditingTask({ ...editingTask, dueDate: formattedDate });
-                        }
-                      }}
-                      className="w-20 p-1 border rounded text-sm"
-                      dateFormat="MMM dd"
-                    />
-                  ) : (
-                    <span
-                      className="text-indigo-500 cursor-pointer hover:text-indigo-700"
-                      onClick={() => handleDateClick(i, task.dueDate)}
-                    >
-                      📅 {task.dueDate}
-                    </span>
-                  )}
+                {editingTask && editingIndex === i ? (
+                  <DatePicker
+                    selected={editingDate}
+                    onChange={(date) => {
+                      if (date) {
+                        const formattedDate = date.toISOString().split('T')[0];
+                        setEditingTask({ ...editingTask, dueDate: formattedDate });
+                      }
+                    }}
+                    className="w-20 p-1 border rounded text-sm"
+                    dateFormat="MMM dd"
+                  />
+                ) : (
+                  <span
+                    className="text-indigo-500 cursor-pointer hover:text-indigo-700"
+                    onClick={() => handleDateClick(i, task.dueDate)}
+                  >
+                    📅 {task.dueDate}
+                  </span>
+                )}
                 </td>
                 <td className="py-2 px-2">
                   {editingTask && editingIndex === i ? (
@@ -288,7 +286,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                     value={task.progress}
                     onChange={(e) => {
                       const updatedTask = { ...task, progress: parseInt(e.target.value) };
-                      onUpdateTask(i, updatedTask);
+                      onUpdateTask(updatedTask);
                     }}
                     className="text-xs border rounded-lg px-1 py-0.5"
                   >
@@ -303,7 +301,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                   {editingTask && editingIndex === i ? (
                     <button
                       onClick={() => {
-                        onUpdateTask(i, editingTask);
+                        onUpdateTask(editingTask);
                         setEditingTask(null);
                         setEditingIndex(null);
                       }}
@@ -327,7 +325,7 @@ export default function TaskSection({ title, tasks, onUpdateTask, onCheckboxChan
                   <button
                     onClick={() => {
                       if (window.confirm("Are you sure you want to delete this task?")) {
-                        onDelete(i);
+                        onDelete(task.id);
                       }
                     }}
                     className="text-red-500 hover:text-red-700"

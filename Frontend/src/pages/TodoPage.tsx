@@ -105,15 +105,9 @@ export default function ToDo() {
 
 
 
-  const handleCheckboxChange = async (section: string, index: number) => {
-    let task: Task;
-    if (section === "To Do") {
-      task = { ...todoTasks[index], progress: 100, status: 'Done' };
-      await updateTask(task);
-    } else if (section === "In Progress") {
-      task = { ...inProgress[index], progress: 100, status: 'Done' };
-      await updateTask(task);
-    }
+  const handleCheckboxChange = async (section: string, task: Task) => {
+    const updatedTask = { ...task, progress: 100, status: 'Done' };
+    await updateTask(updatedTask);
   };
 
   const updateTask = async (task: Task) => {
@@ -140,7 +134,7 @@ export default function ToDo() {
     }
   };
 
-  const handleUpdateTask = async (section: string, index: number, updatedTask: Task) => {
+  const handleUpdateTask = async (section: string, updatedTask: Task) => {
     let targetStatus: string;
 
     if (updatedTask.progress === 0) {
@@ -197,9 +191,9 @@ export default function ToDo() {
             </button>
           </div>
 
-          <TaskSection title="To Do" tasks={filteredTasks(todoTasks)} onUpdateTask={(index, task) => handleUpdateTask("To Do", index, task)} onCheckboxChange={(index) => handleCheckboxChange("To Do", index)} onDelete={(index) => handleDeleteTask(todoTasks[index].id)} />
-          <TaskSection title="In Progress" tasks={filteredTasks(inProgress)} onUpdateTask={(index, task) => handleUpdateTask("In Progress", index, task)} onCheckboxChange={(index) => handleCheckboxChange("In Progress", index)} onDelete={(index) => handleDeleteTask(inProgress[index].id)} />
-          <TaskSection title="Done" tasks={filteredTasks(done)} onUpdateTask={(index, task) => handleUpdateTask("Done", index, task)} onDelete={(index) => handleDeleteTask(done[index].id)} />
+          <TaskSection title="To Do" tasks={filteredTasks(todoTasks)} onUpdateTask={(task) => handleUpdateTask("To Do", task)} onCheckboxChange={(task) => handleCheckboxChange("To Do", task)} onDelete={(taskId) => handleDeleteTask(taskId)} />
+          <TaskSection title="In Progress" tasks={filteredTasks(inProgress)} onUpdateTask={(task) => handleUpdateTask("In Progress", task)} onCheckboxChange={(task) => handleCheckboxChange("In Progress", task)} onDelete={(taskId) => handleDeleteTask(taskId)} />
+          <TaskSection title="Done" tasks={filteredTasks(done)} onUpdateTask={(task) => handleUpdateTask("Done", task)} onDelete={(taskId) => handleDeleteTask(taskId)} />
         </div>
       </div>
       <AddTaskForm

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -30,7 +29,7 @@ export default function AddTaskForm({ isOpen, onClose, onAddTask }: AddTaskFormP
 
   if (!isOpen) return null;
 
-  const modalContent = (
+  return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
         <h2 className="text-xl font-bold mb-4 text-blue-600">Add New Task</h2>
@@ -90,6 +89,4 @@ export default function AddTaskForm({ isOpen, onClose, onAddTask }: AddTaskFormP
       </div>
     </div>
   );
-
-  return createPortal(modalContent, document.body);
 }

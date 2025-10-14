@@ -113,7 +113,7 @@ export default function Header({ searchQuery, onSearchChange, filters, onFilterC
                   onClearFilters();
                   setIsDropdownOpen(false);
                 }}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                className="w-full bg-transparent text-blue py-2 rounded-lg hover:bg-blue-700"
               >
                 Clear Filters
               </button>
